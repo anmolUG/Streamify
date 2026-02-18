@@ -2,7 +2,6 @@ import express from "express";
 import "dotenv/config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import path from "path";
 
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
@@ -12,8 +11,6 @@ import { connectDB } from "./lib/db.js";
 
 const app = express();
 const PORT = process.env.PORT;
-
-const __dirname = path.resolve();
 
 app.use(
   cors({
@@ -29,13 +26,19 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK", message: "Server is running" });
+});
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-  });
-}
+// Only serve static files if frontend is in the same deployment
+// Commented out since frontend is deployed separately
+// if (process.env.NODE_ENV === "production" && process.env.SERVE_FRONTEND === "true") {
+//   app.use(express.static(path.join(__dirname, "../frontend/dist")));
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+//   });
+// }
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
