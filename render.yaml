@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: streamify-backend
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    # Add your other environment variables here
+    # - key: MONGODB_URI
+    #   sync: false
+    # - key: JWT_SECRET
+    #   sync: false
+
